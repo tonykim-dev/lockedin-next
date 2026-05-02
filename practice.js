@@ -122,7 +122,21 @@ const back = JSON.parse(str); // {name:'water',done:true}
 // export const PI = 3.14;
 // in other file:
 import { addts,PI} from './utils.js'
-console.log(addts(6+7));
+console.log(addts(6,7));
+console.log(PI);
 // Make sure ur package.json has "type": "module" so import/export works. (bun init does this for you.)
 
 // map, Promise, await recap
+
+// map basically transforms each element via function and returns
+// new array of the same length
+const lol = [6,7,8,9].map(n => n**2); // [36,49,64,81], same length transformed
+console.log(lol) //runs function on every element & collects the results
+
+// filter shrinks (keeps some), map transforms (keeps all, changes each)
+
+// from discrete: filter returns a subset; map returns same count, reshaped.
+
+const receipt = fs.readFile('utils.json'); // Promise (the receipt)
+const meal = await fs.readFile('utils.json'); // string (the actual contents)
+
