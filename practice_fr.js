@@ -29,8 +29,35 @@ function addHabit(args){
 console.log(addHabit({name: 'fly',done:false}));
 console.log(habits); // nothing changed
 
-function findHabit(param){
-    habits.find(h => h.name === param); // if not there,
-    // what can i do to return smth else instead of undefined
+console.log(' - - - ')
+
+// this way is more optimal since prev. used global habits array instead
+// of taking it as a param. works, but its tied to one specific array.
+
+function findHabit(habitArrType, name){
+    return habitArrType.find(h=>h.name === name);
 }
-console.log(findHabit('drink'));
+console.log(findHabit(habits,'water'));
+console.log(findHabit(habits,'drink')); // undefined
+
+// if i want smth else instead of it returning 'undefined', i do one of these
+
+// option 1) nullish coalescing (return a default or smth)
+
+function findHabibi(arr,name){
+    return arr.find(h=>h.name === name) ?? null;
+}
+
+console.log(' - - - ');
+
+// option 2) explicit fallback
+
+function findHabibi(arr,name){
+    const found = arr.find(h=>h.name ===name);
+    if (!found){
+        return {name,done: false, missing: true}; // sentinel
+    }
+    return found;
+}
+
+console.log('no-undefined',findHabibi(habits,'push-ups')); // undefined
