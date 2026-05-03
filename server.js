@@ -4,12 +4,12 @@ import fs from 'node:fs/promises';
 const server = http.createServer(async (req, res) => {
     if (req.method === 'GET'  && req.url === '/habits'){
         res.writeHead(200,{'Content-Type':'application/json'});
-        res.end(JSON.stringify({
-        data:"[ ] ",}))}
+        res.end(JSON.stringify([]))} // literally should be [] (JSON array) not a string of one
+        // i can also do res.end('[]');
     else {
         res.writeHead(404,{'Content-Type':'application/json'});
         res.end(JSON.stringify({
-        data: '404 endpoint does not exist.',
+        error: 'endpoint does not exist.',
     }));
     }
 });
