@@ -90,7 +90,9 @@ const [first, second] = arr;
 // so they return a promise (placeholder for a future value)
 import fs from 'node:fs/promises';
 // w/out await: u get the promise object, not the contents
+
 const promise = fs.readFile('habits.json','utf-8');
+
 console.log(promise); // Promise { <pending> } (u don't want ts)
 
 // with await: waits for it, gives u the actual string
