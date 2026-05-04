@@ -41,15 +41,16 @@ const server = http.createServer(async (req, res) => {
     }
     else if (req.method === 'DELETE' && parts[0] === 'habits' && parts.length === 2){
         const id = Number(parts[1]);
-        const targetHabit = habits.find(h => h.id === id);
-        if (!targetHabit) {
+        const targetHabitIndex = habits.findIndex(h => h.id === id);
+        if (targetHabitIndex === -1) {
             res.writeHead(404,{'Content-Type':'application/json'});
             res.end(JSON.stringify({error: 'targetHabit does not exist.'}));
             return;
         }
-        await fs.writeFile('habits.json', JSON.stringify(habits.splice(targetHabit,1), null, 2));
+        habits.splice(targetHabitIndex,1);
+        await fs.writeFile('habits.json', JSON.stringify(habits, null, 2));
         res.writeHead(204, {'Content-Type': 'application/json'});
-        res.end(JSON.stringify({message: 'habit successfully deleted.'}));
+        res.end();
     }
     else{
         res.writeHead(405,{'Content-Type':'application/json'});
