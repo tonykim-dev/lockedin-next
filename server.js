@@ -5,19 +5,12 @@ const server = http.createServer(async (req, res) => {
 
     const text = await fs.readFile('habits.json','utf-8');
     const habits = JSON.parse(text);
-    // console.log(habits); log if needed
-
     const nextId = habits.length === 0 ? 1 : Math.max(...habits.map(h => h.id)) + 1;
-
-    const parts = req.url.split('/').filter(f => f); // placeholder for now, but needed for parsing
-    // also had bugs since it it some bs w empty str for first "" index value
-    console.log(parts)
-
+    const parts = req.url.split('/').filter(f => f);
 
     if (req.method === 'GET'  && req.url === '/habits'){
-
-        res.writeHead(200,{'Content-Type':'application/json'});
-        res.end(JSON.stringify(habits))
+            res.writeHead(200,{'Content-Type':'application/json'});
+            res.end(JSON.stringify(habits));
         }
 
     else if (req.method === 'POST' && req.url === '/habits'){
@@ -25,7 +18,7 @@ const server = http.createServer(async (req, res) => {
         req.on('data', chunk => body +=chunk);
         req.on('end', async () => {
             const parsed = JSON.parse(body);
-            const newHabit = {id: nextId, name: parsed.name, done: false};
+            const newHabit = {id: nextId, name: parsed.name, complete: false};
             habits.push(newHabit);
             await fs.writeFile('habits.json',JSON.stringify(habits,null,2));
             res.writeHead(201, {'Content-Type': 'application/json'});
@@ -35,36 +28,34 @@ const server = http.createServer(async (req, res) => {
     
     else if (req.method === 'POST' && parts[0] === 'habits' && parts.length === 3 && parts[2] === 'complete'){
         const id = Number(parts[1]);
-        const withId = habits.find(h => h.id === id);
-        if (!withId){
+        const targetHabit = habits.find(h => h.id === id);
+        if (!targetHabit){
             res.writeHead(404,{'Content-Type':'application/json'});
-            res.end(JSON.stringify({error: 'endpoint does not exist.'}));
+            res.end(JSON.stringify({error: 'targetHabit does not exist.'}));
+            return;
         }
-        habits.done = true;
+        targetHabit.complete = true;
         await fs.writeFile('habits.json',JSON.stringify(habits,null,2));
         res.writeHead(200, {'Content-Type': 'application/json'});
         res.end(JSON.stringify(habits));
-        
     }
     else if (req.method === 'DELETE' && parts[0] === 'habits' && parts.length === 2){
         const id = Number(parts[1]);
-        const withId = habits.find(h => h.id === id);
-        if (withId === -1) {
+        const targetHabit = habits.find(h => h.id === id);
+        if (!targetHabit) {
+            res.writeHead(404,{'Content-Type':'application/json'});
+            res.end(JSON.stringify({error: 'targetHabit does not exist.'}));
             return;
         }
-        habits.splice(withId,1);
-        await fs.writeFile('habits.json', JSON.stringify(habits, null, 2));
-
+        await fs.writeFile('habits.json', JSON.stringify(habits.splice(targetHabit,1), null, 2));
         res.writeHead(204, {'Content-Type': 'application/json'});
-
-        res.end(JSON.stringify({complete: 'ggs twin'}));
-
+        res.end(JSON.stringify({message: 'habit successfully deleted.'}));
     }
     else{
-        res.writeHead(404,{'Content-Type':'application/json'});
+        res.writeHead(405,{'Content-Type':'application/json'});
         res.end(JSON.stringify({
-        error: 'endpoint does not exist.',
+        error: 'Request does not exist or not allowed.',
     }));
     }
 });
-server.listen(8000);
+server.listen(3000);
