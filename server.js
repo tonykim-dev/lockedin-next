@@ -37,7 +37,7 @@ const server = http.createServer(async (req, res) => {
         targetHabit.complete = true;
         await fs.writeFile('habits.json',JSON.stringify(habits,null,2));
         res.writeHead(200, {'Content-Type': 'application/json'});
-        res.end(JSON.stringify(habits));
+        res.end(JSON.stringify(targetHabit));
     }
     else if (req.method === 'DELETE' && parts[0] === 'habits' && parts.length === 2){
         const id = Number(parts[1]);
